@@ -44,6 +44,12 @@ function sh(cmd, args, opts = {}) {
   return execFileSync(cmd, args, { stdio: 'inherit', ...opts });
 }
 
+/** Run a script from node_modules/.bin without relying on PATH or npx. */
+function bin(name, args) {
+  const js = name === 'tsc' ? 'node_modules/typescript/bin/tsc' : `node_modules/${name}/bin/${name}`;
+  return sh(process.execPath, [js, ...args]);
+}
+
 // --- checks -----------------------------------------------------------------
 const status = execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim();
 if (status) {
@@ -58,11 +64,11 @@ if (existing) {
 
 // --- build ------------------------------------------------------------------
 console.log('\n== typecheck ==');
-sh('npx', ['tsc', '--noEmit']);
+bin('tsc', ['--noEmit']);
 console.log('\n== test ==');
-sh('node', ['tests/run.mjs']);
+sh(process.execPath, ['tests/run.mjs']);
 console.log('\n== build ==');
-sh('node', ['esbuild.config.mjs', 'production']);
+sh(process.execPath, ['esbuild.config.mjs', 'production']);
 
 for (const file of ARTIFACTS) {
   if (!fs.existsSync(file)) {
