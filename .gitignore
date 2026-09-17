@@ -1,7 +1,7 @@
 node_modules/
 data.json
 .DS_Store
-# build output — generated, but committed so BRAT users can install without a toolchain
-# main.js is intentionally tracked via a GitHub Release asset instead
 tests/_*.mjs
 *.tmp
+# local working notes, not part of the plugin
+.workbuddy/
