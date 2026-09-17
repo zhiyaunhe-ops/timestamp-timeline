@@ -1,0 +1,10 @@
+{
+  "id": "timestamp-timeline",
+  "name": "Timestamp Timeline",
+  "version": "1.2.0",
+  "minAppVersion": "1.4.0",
+  "description": "Auto timestamp while writing, plus a vault-wide timeline of every dated line. No AI involved.",
+  "author": "ZY",
+  "authorUrl": "",
+  "isDesktopOnly": false
+}

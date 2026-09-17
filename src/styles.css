@@ -1,0 +1,555 @@
+/* ============================================================
+   Timestamp Timeline — uses Obsidian theme variables so it
+   follows the active theme (light or dark) automatically.
+   ============================================================ */
+
+/* ----------------------------------------------------------------- settings */
+
+.ai-ns-settings .setting-item-description {
+  line-height: 1.5;
+}
+
+.ai-ns-mono-input {
+  font-family: var(--font-monospace);
+  font-size: var(--font-ui-smaller);
+}
+
+.ai-ns-stamp-preview-box {
+  margin-top: 6px;
+  padding: 8px 10px;
+  border: 1px dashed var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  background-color: var(--background-secondary);
+  font-family: var(--font-monospace);
+  font-size: var(--font-ui-smaller);
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+/* ================================================================ timeline */
+
+.ai-ns-tl-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0;
+}
+
+.ai-ns-tl-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  background-color: var(--background-secondary);
+}
+
+.ai-ns-tl-search {
+  flex: 1 1 200px;
+  min-width: 140px;
+  padding: 5px 9px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  background-color: var(--background-primary);
+  color: var(--text-normal);
+  font-size: var(--font-ui-small);
+}
+
+.ai-ns-tl-selects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ai-ns-tl-select {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+
+.ai-ns-tl-select select {
+  padding: 3px 4px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-s);
+  background-color: var(--background-primary);
+  color: var(--text-normal);
+  font-size: var(--font-ui-smaller);
+}
+
+.ai-ns-tl-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ai-ns-tl-foldall.is-active,
+.ai-ns-tl-onlytasks.is-active {
+  border-color: var(--interactive-accent);
+  color: var(--text-normal);
+}
+
+.ai-ns-tl-status {
+  padding: 6px 16px;
+  color: var(--text-faint);
+  font-size: var(--font-ui-smaller);
+}
+
+.ai-ns-tl-scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
+
+.ai-ns-tl-list {
+  max-width: 900px;
+  padding: 4px 16px 40px;
+}
+
+.ai-ns-tl-empty {
+  padding: 48px 12px;
+  color: var(--text-faint);
+  text-align: center;
+}
+
+/* ---- day group ----
+   Each day is drawn as one box holding its own header and its own blocks, and
+   the gap *inside* the box is deliberately much smaller than the gap between
+   boxes. Without that, a card sits closer to the next day's header than to its
+   own and reads as belonging to the wrong date.
+   The ring is an inset box-shadow, not a border/overflow pair: `overflow:
+   hidden` would make the group a scroll container and the sticky header would
+   stick to the group instead of to the pane. */
+
+.ai-ns-tl-day,
+.ai-ns-tl-file {
+  margin-bottom: 14px;
+  padding-bottom: 5px;
+  border-radius: var(--radius-m);
+  background-color: var(--background-secondary);
+  box-shadow: inset 0 0 0 1px var(--background-modifier-border);
+}
+
+.ai-ns-tl-dayhead,
+.ai-ns-tl-filehead {
+  position: sticky;
+  z-index: 2;
+  top: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: var(--radius-m) var(--radius-m) 0 0;
+  background-color: var(--background-secondary);
+  /* Hairline pinned right on top of the first card: the date stays welded to
+     the blocks it owns even while the header is stuck at the top. */
+  box-shadow: inset 0 -1px 0 var(--background-modifier-border);
+  cursor: pointer;
+  user-select: none;
+}
+
+.ai-ns-tl-dayhead:hover,
+.ai-ns-tl-filehead:hover {
+  color: var(--text-normal);
+  background-color: var(--background-modifier-hover);
+}
+
+.ai-ns-tl-chevron {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-s);
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.ai-ns-tl-chevron:hover {
+  color: var(--text-normal);
+  background-color: var(--background-modifier-hover);
+}
+
+.ai-ns-tl-chevron .svg-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.ai-ns-tl-foldstate {
+  padding: 0 6px;
+  border-radius: 999px;
+  background-color: var(--background-primary);
+  color: var(--text-faint);
+  font-size: var(--font-ui-smaller);
+}
+
+.ai-ns-tl-daydate {
+  color: var(--text-normal);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.ai-ns-tl-dayweek {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+
+.ai-ns-tl-daycount {
+  margin-left: auto;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background-color: var(--background-primary);
+  color: var(--text-faint);
+  font-size: var(--font-ui-smaller);
+  font-variant-numeric: tabular-nums;
+}
+
+.ai-ns-tl-filelink {
+  color: var(--text-normal);
+  font-weight: 600;
+}
+
+.ai-ns-tl-daybody {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  /* No top margin: the header's own padding is the breathing room, so nothing
+     can open a gap between the date and its first block. */
+  margin: 0 5px 0 6px;
+  padding-left: 16px;
+  border-left: 2px solid var(--background-modifier-border);
+}
+
+.ai-ns-tl-daybody.is-hidden {
+  display: none;
+}
+
+/* A collapsed day keeps every block as one line — no content vanishes. */
+.ai-ns-tl-outline {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin: 0 5px 0 6px;
+  padding-left: 16px;
+  border-left: 2px solid var(--background-modifier-border);
+}
+
+.ai-ns-tl-outline-row {
+  padding: 3px 8px;
+  overflow: hidden;
+  border-radius: var(--radius-s);
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.ai-ns-tl-outline-row:hover {
+  color: var(--text-normal);
+  background-color: var(--background-modifier-hover);
+}
+
+.ai-ns-tl-outline-row.is-empty {
+  color: var(--text-faint);
+}
+
+/* ---- one block ---- */
+
+.ai-ns-tl-card {
+  position: relative;
+  display: flex;
+  gap: 8px;
+  padding: 5px 10px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  background-color: var(--background-primary);
+}
+
+.ai-ns-tl-card::before {
+  position: absolute;
+  top: 10px;
+  left: -22px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--background-primary);
+  border-radius: 50%;
+  background-color: var(--interactive-accent);
+  content: '';
+}
+
+.ai-ns-tl-card.is-folded {
+  padding: 4px 10px;
+}
+
+.ai-ns-tl-card.is-folded::before {
+  top: 9px;
+}
+
+.ai-ns-tl-card.is-filename::before {
+  background-color: var(--text-faint);
+}
+
+/* Inside a tinted day box the node's ring must match the box, not the page,
+   or every node wears a light halo on the spine. */
+.ai-ns-tl-day .ai-ns-tl-card::before,
+.ai-ns-tl-file .ai-ns-tl-card::before {
+  border-color: var(--background-secondary);
+}
+
+/* Grouping off: blocks are plain siblings and need the gap groups used to give. */
+.ai-ns-tl-list > .ai-ns-tl-card + .ai-ns-tl-card {
+  margin-top: 6px;
+}
+
+.ai-ns-tl-card:hover {
+  border-color: var(--interactive-accent-hover, var(--interactive-accent));
+}
+
+.ai-ns-tl-rail {
+  display: flex;
+  flex: 0 0 60px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  padding-top: 1px;
+}
+
+.ai-ns-tl-time {
+  color: var(--text-normal);
+  font-family: var(--font-monospace);
+  font-size: var(--font-ui-small);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.ai-ns-tl-time.is-dateonly {
+  color: var(--text-faint);
+}
+
+.ai-ns-tl-tag {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ai-ns-tl-main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ai-ns-tl-cardhead {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 3px;
+  color: var(--text-faint);
+  font-size: var(--font-ui-smaller);
+}
+
+.ai-ns-tl-cardhead.is-clickable {
+  cursor: pointer;
+}
+
+.ai-ns-tl-fold {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-s);
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.ai-ns-tl-fold:hover {
+  color: var(--text-normal);
+  background-color: var(--background-modifier-hover);
+}
+
+.ai-ns-tl-fold .svg-icon {
+  width: 13px;
+  height: 13px;
+}
+
+/* Folded digest: plain text on purpose — a 2-line clamp of a table renders empty. */
+.ai-ns-tl-folded {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ai-ns-tl-morelines {
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+.ai-ns-tl-src {
+  overflow: hidden;
+  flex: 0 1 auto;
+  min-width: 0;
+  color: var(--text-accent);
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ai-ns-tl-src:hover {
+  text-decoration: underline;
+}
+
+.ai-ns-tl-crumb {
+  overflow: hidden;
+  flex: 1 1 auto;
+  min-width: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.8;
+}
+
+.ai-ns-tl-badge {
+  flex: 0 0 auto;
+  padding: 0 6px;
+  border-radius: 999px;
+  background-color: var(--background-secondary);
+  font-size: var(--font-ui-smaller);
+}
+
+/* Task state on a timeline card. */
+.ai-ns-tl-task {
+  flex: 0 0 auto;
+  font-size: var(--font-ui-smaller);
+}
+
+.ai-ns-tl-task.is-todo {
+  color: var(--text-accent);
+}
+
+.ai-ns-tl-task.is-done {
+  color: var(--text-faint);
+}
+
+.ai-ns-tl-card.is-done .ai-ns-tl-body {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--text-faint);
+}
+
+.ai-ns-tl-cardactions {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+  opacity: 0;
+  transition: opacity 120ms ease-in-out;
+}
+
+.ai-ns-tl-card:hover .ai-ns-tl-cardactions,
+.ai-ns-tl-card:focus-within .ai-ns-tl-cardactions {
+  opacity: 1;
+}
+
+.ai-ns-tl-body {
+  color: var(--text-normal);
+  font-size: var(--font-text-size);
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+.ai-ns-tl-body > *:first-child {
+  margin-top: 0;
+}
+
+.ai-ns-tl-body > *:last-child {
+  margin-bottom: 0;
+}
+
+.ai-ns-tl-body img,
+.ai-ns-tl-body video {
+  max-width: 100%;
+  height: auto;
+}
+
+.ai-ns-tl-body pre {
+  overflow-x: auto;
+}
+
+.ai-ns-tl-body table {
+  display: block;
+  overflow-x: auto;
+}
+
+.ai-ns-tl-pre {
+  font-family: var(--font-monospace);
+  font-size: var(--font-ui-smaller);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.ai-ns-tl-nobody {
+  color: var(--text-faint);
+}
+
+.ai-ns-tl-more {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 7px;
+  border: 1px dashed var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  cursor: pointer;
+}
+
+.ai-ns-tl-more:hover {
+  border-color: var(--interactive-accent);
+  color: var(--text-normal);
+}
+
+/* Narrow panes: stack the time above the card content and drop the spine. */
+@media (max-width: 700px) {
+  .ai-ns-tl-list {
+    padding: 4px 8px 40px;
+  }
+
+  .ai-ns-tl-daybody,
+  .ai-ns-tl-outline {
+    margin: 0 3px 0 0;
+    padding-left: 0;
+    border-left: none;
+  }
+
+  .ai-ns-tl-card {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .ai-ns-tl-card::before {
+    display: none;
+  }
+
+  .ai-ns-tl-rail {
+    flex: 0 0 auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+  }
+}
