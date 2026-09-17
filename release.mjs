@@ -84,7 +84,10 @@ const staged = execFileSync('git', ['diff', '--cached', '--name-only'], { encodi
 if (staged) {
   sh('git', ['commit', '-m', `chore(release): ${tag}`]);
 }
-sh('git', ['tag', tag]);
+// An annotated tag is required for `git push --follow-tags` to carry it; a
+// lightweight tag is silently left behind, which then makes `gh release create`
+// fail because the tag does not exist on the remote.
+sh('git', ['tag', '-a', tag, '-m', tag]);
 sh('git', ['push', 'origin', 'HEAD', '--follow-tags']);
 
 console.log('\n== github release ==');
