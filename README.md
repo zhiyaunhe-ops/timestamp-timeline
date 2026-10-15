@@ -181,3 +181,9 @@ plain Node.
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+## Related documents
+
+目前 README 是本仓库的唯一维护文档，使用或修改项目时从本页对应章节开始即可；不要为了形式创建空的 Domain、Case 或 API 文档。以后新增专题文档时，应在 README 添加按任务选择的入口，并在新文档放回到 README 的链接。
+
+文档链接及章节锚点由 GitHub Actions 自动检查，本地可执行 `node scripts/check-doc-links.mjs`。
